@@ -1,0 +1,16 @@
+---
+- name: Install and configure Nginx
+  hosts: ec2
+  become: true
+  tasks:
+    - name: Install Nginx
+      yum:
+        name: nginx
+        state: latest
+
+    - name: Start and enable Nginx service
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
