@@ -1,0 +1,7 @@
+- hosts: ec2
+  tasks:
+    - name: Install Nginx
+      become: yes
+      yum:
+        name: nginx
+        state: present

@@ -1,0 +1,18 @@
+---
+- hosts: ec2
+  become: yes
+  tasks:
+    - name: Remove old index.html file
+      file:
+        path: /usr/share/nginx/html/index.html
+        state: absent
+
+    - name: Copy new app files
+      copy:
+        src: /home/ansible/Ansible/9.task/index.html
+        dest: /usr/share/nginx/html
+        force: no
+
+    - debug:
+        msg: "Success"
+

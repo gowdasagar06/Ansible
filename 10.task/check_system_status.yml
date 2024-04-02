@@ -1,0 +1,10 @@
+---
+- hosts: ec2
+  tasks:
+    - name: Check System Status
+      system_status:
+      register: system_output
+
+    - debug:
+        var: system_output
+

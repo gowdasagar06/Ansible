@@ -1,0 +1,5 @@
+- hosts: ec2
+  tasks:
+    - name: Ping All Servers
+      action: ping
+    - debug: msg="Success"

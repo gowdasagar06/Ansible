@@ -1,0 +1,15 @@
+---
+- name: Ping
+  import_playbook: 1.ping.yml
+
+- name: Update
+  import_playbook: 2.upgrade.yml
+
+- name: Install Node
+  import_playbook: 3.install.yml
+
+- name: Provisioning
+  import_playbook: 4.provisioning.yml
+
+- name: Restart
+  import_playbook: 5.restart_service.yml
