@@ -1,0 +1,11 @@
+---
+- name: Deploy Web Application
+  hosts: ec2
+  vars_files:
+    - secrets.yml
+
+  tasks:
+    - name: Print database password
+      debug:
+        var: db_password
+

@@ -1,0 +1,17 @@
+---
+- name: Install Nginx with Error Handling
+  hosts: all
+  become: true
+  tasks:
+    - name: Attempt to install Nginx
+      package:
+        name: nginx
+        state: present
+          #ignore_errors: true
+      register: nginx_result
+
+    - name: Check if Nginx installation failed
+      debug:
+        msg: "Nginx installation failed: {{ nginx_result.msg }}"
+      failed_when: nginx_result is failed
+

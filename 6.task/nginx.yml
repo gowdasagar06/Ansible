@@ -1,0 +1,28 @@
+---
+- name: Perform OS-specific tasks
+  hosts: ec2
+  become: true
+  tasks:
+    - name: Install Nginx on CentOS
+      package:
+        name: nginx
+        state: present
+      when: ansible_distribution == 'Amazon'
+
+    - name: Install Nginx on Ubuntu
+      package:
+        name: nginx
+        state: present
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Ensure Nginx service is started (systemd)
+      service:
+        name: nginx
+        state: started
+      when: ansible_service_mgr == 'systemd'
+
+    - name: Ensure Nginx service is started (sysvinit)
+      service:
+        name: nginx
+        state: started
+      when: ansible_service_mgr == 'sysvinit'
