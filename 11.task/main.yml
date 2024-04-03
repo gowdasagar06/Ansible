@@ -1,0 +1,23 @@
+---
+- name: Execute tasks in parallel on multiple hosts
+  hosts: ec2
+  gather_facts: no
+  tasks:
+    - name: Execute task in parallel
+      command: ls
+      async: 300
+      poll: 0
+      register: task_result
+
+    - name: Wait for task to complete
+      async_status:
+        jid: "{{ task_result.ansible_job_id }}"
+      register: job_result
+      until: job_result.finished
+      retries: 30
+      delay: 10
+
+    - name: Gather task result
+      debug:
+        msg: "Task on {{ inventory_hostname }} completed with result: {{ task_result }}"
+

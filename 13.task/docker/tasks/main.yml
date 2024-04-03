@@ -1,0 +1,67 @@
+- name: Update apt package cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install prerequisite packages
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg-agent
+      - software-properties-common
+
+- name: Add Docker GPG key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker APT repository
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+    state: present
+
+- name: Update apt package cache (again after adding Docker repo)
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install Docker
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: present
+
+- name: Add user to docker group (optional)
+  user:
+    name: "{{ ansible_user }}"
+    append: yes
+    groups: docker
+    
+- name: Copy new app files
+  copy:
+    src: /home/ansible/Ansible/9.task/index.html
+    dest: /home/ansible/
+    force: no
+
+- name: Pull Docker image
+  docker_image:
+    name: "nginx:latest"
+    state: present
+    source: pull
+
+- name: Run Docker container
+  docker_container:
+    name: my_nginx_container
+    image: "nginx:latest"
+    state: started
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/home/ansible/:/usr/share/nginx/html"
+        
+

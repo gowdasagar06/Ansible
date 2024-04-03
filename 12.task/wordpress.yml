@@ -1,0 +1,7 @@
+# tomcat.yml
+
+- name: wordpress
+  hosts: ec2
+  become: yes
+  roles:
+    - wordpress
