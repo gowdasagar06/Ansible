@@ -1,0 +1,8 @@
+region: "ap-south-1"
+instance_type: "t2.micro"
+ami_id: "ami-007020fd9c84e18c7"
+key_name: "sagar"
+security_group_name: "Ansible"
+subnet: "subnet-00517204282a7b5e2"
+volume_size_gb: 10
+volume_device_name: "/dev/xvda"

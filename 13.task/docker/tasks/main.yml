@@ -40,11 +40,16 @@
     name: "{{ ansible_user }}"
     append: yes
     groups: docker
-    
+
+- name: Ensure directory /tmp/html exists
+  file:
+    path: /tmp/html
+    state: directory
+
 - name: Copy new app files
   copy:
-    src: /home/ansible/Ansible/9.task/index.html
-    dest: /home/ansible/
+    src: /home/ansible/Ansible/13.task/docker/files/index.html
+    dest: /tmp/html/index.html
     force: no
 
 - name: Pull Docker image
@@ -62,6 +67,5 @@
       - "80:80"
       - "443:443"
     volumes:
-      - "/home/ansible/:/usr/share/nginx/html"
-        
+      - "/tmp/html:/usr/share/nginx/html"
 

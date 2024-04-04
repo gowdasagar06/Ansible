@@ -1,0 +1,61 @@
+---
+- name: Provision EC2 instances
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Create security group
+      ec2_group:
+        name: "{{ security_group_name }}"
+        description: "Security group for EC2 instance"
+        region: "{{ region }}"
+        rules:
+          - proto: tcp
+            from_port: 22
+            to_port: 22
+            cidr_ip: 0.0.0.0/0  # Allow SSH from anywhere
+          - proto: tcp
+            from_port: 80
+            to_port: 80
+            cidr_ip: 0.0.0.0/0  # Allow HTTP from anywhere
+          # Add more rules as needed for your application
+
+    - name: Launch EC2 instance
+      community.aws.ec2_instance:
+        region: "{{ region }}"
+        key_name: "{{ key_name }}"
+        instance_type: "{{ instance_type }}"
+        image_id: "{{ ami_id }}"
+        security_group: "{{ security_group_name }}"
+        wait: yes
+        count: 1
+        tags:
+          Name: MyEC2Instance  # Example tag
+      register: ec2_instance
+
+    - name: Debug EC2 instance info
+      debug:
+        var: ec2_instance
+
+    - name: Wait for instance to be in 'running' state
+      wait_for:
+        host: "{{ ec2_instance.instances[0].public_dns_name }}"
+        port: 22
+        state: started
+        delay: 10
+        timeout: 300
+
+    - name: Attach EBS volume
+      ec2_vol:
+        region: "{{ region }}"
+        instance: "{{ ec2_instance.instances[0].instance_id }}"
+        device_name: "{{ volume_device_name }}"
+        volume_size: "{{ volume_size_gb }}"
+        delete_on_termination: yes
+      register: attached_volume
+
+    - name: Debug attached volume info
+      debug:
+        var: attached_volume
+
