@@ -1,3 +1,4 @@
+#Switch to root user and execute this shell script
 #!/bin/bash
 
 # Check if the ansible user already exists
