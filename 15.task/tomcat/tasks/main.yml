@@ -1,0 +1,72 @@
+- name: Update apt package cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install prerequisite packages
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg-agent
+      - software-properties-common
+
+- name: Add Docker GPG key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker APT repository
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+    state: present
+
+- name: Update apt package cache (again after adding Docker repo)
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install Docker
+  apt:
+    name: 
+      - docker-ce 
+      - docker-ce-cli
+      - containerd.io
+    state: present
+
+- name: Add user to docker group (optional)
+  user:
+    name: "{{ ansible_user }}"
+    append: yes
+    groups: docker
+
+- name: Ensure directory /tmp/html exists
+  file:
+    path: /home/ubuntu/docker
+    state: directory
+
+- name: Copy Docker file
+  template:
+    src: "templates/Dockerfile"
+    dest: "/home/ubuntu/docker/"
+  become: yes
+
+- name: Copy Docker file
+  template:
+    src: "templates/TomcatMavenApp-2.0.war"
+    dest: "/home/ubuntu/docker/"
+  become: yes
+
+- name: Build Docker image
+  command: "docker build -t java_app -f /home/ubuntu/docker/Dockerfile ."
+  args:
+    chdir: "/home/ubuntu/docker/"  # Specify the directory where the Dockerfile is located
+
+- name: Stop and remove existing Docker container (if exists)
+  command: "docker rm -f tomcat 2>&1 >> /dev/null"
+  ignore_errors: yes  # Ignore errors if the container doesn't exist
+
+- name: Run Docker container
+  command: "docker run -d --name tomcat -p 8082:8080 java_app"
+

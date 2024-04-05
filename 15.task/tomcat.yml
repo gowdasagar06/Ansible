@@ -1,0 +1,8 @@
+# tomcat.yml
+
+- name: Tomcat 
+  hosts: ec2
+  become: yes
+  roles:
+    - tomcat
+
