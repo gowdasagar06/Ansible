@@ -1,0 +1,7 @@
+---
+- name: "Install webserver"
+  hosts: ec2
+  tasks:
+  - name: "Test variables"
+    debug:
+      msg: "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"

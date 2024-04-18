@@ -1,0 +1,38 @@
+---
+# Define RBAC policies
+rbac_policies:
+  admin:
+    - name: "Allow all actions"
+      action: "*"
+  developer:
+    - name: "Allow read-only access"
+      action: "read"
+  operator:
+    - name: "Allow limited actions"
+      action: "start, stop, restart"
+
+# Assign users or groups to roles
+rbac_assignments:
+  admin_users:
+    - user1
+    - user2
+  developer_users:
+    - user3
+  operator_users:
+    - user4
+    - user5
+
+# Ansible playbook to enforce RBAC
+- name: Enforce RBAC policies
+  hosts: all
+  tasks:
+    - name: Check RBAC permissions
+      debug:
+        msg: "User {{ ansible_user }} has permission to {{ item.action }}"
+      loop: "{{ rbac_policies[rbac_role] }}"
+      loop_control:
+        loop_var: item
+      when: "'{{ ansible_user }}' in rbac_assignments[rbac_role]"
+      vars:
+        rbac_role: "{{ lookup('dict', rbac_assignments)[ansible_user] }}"
+

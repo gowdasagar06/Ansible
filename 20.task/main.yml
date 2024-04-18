@@ -1,0 +1,37 @@
+---
+- name: "Install webserver"
+  hosts: all
+  become: yes
+  vars_files:
+     - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+  
+  tasks:
+    - name: "Install the web server"
+      package:
+              name: " {{ package_name }}"
+              state: present
+    
+    - name: "Create document root directory"
+      file: 
+          path: "{{document_root }}"
+          state: directory
+          recurse: yes
+    - name: "Create index.htm page in document root"
+      copy:
+              content: "<h1> Welcome to {{ ansible_distribution }} server !! </h1>"
+              dest: "{{ document_root }}/index.html"
+    
+    - name: "Start the service"
+      service:
+              name: "{{ service_name }}"
+              state: started
+- name: "Test the servers"
+  hosts: localhost
+  tasks:
+          - name: "HealthCheck the servers"
+            uri:
+               url: "http://{{item}}"
+               return_content: yes
+            with_items: "{{ groups['ec2'] }}"
+            register: output
+            failed_when: '"Welcome" not in output.content'

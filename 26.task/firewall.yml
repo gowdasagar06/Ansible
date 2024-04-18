@@ -1,0 +1,28 @@
+---
+- name: Apply firewall rules
+  hosts: ec2
+  become: yes  # Ensure privilege escalation for managing firewall rules
+
+  tasks:
+    - name: Allow SSH (port 22) through firewall
+      ufw:
+        rule: allow
+        port: 22
+        proto: tcp
+
+    - name: Allow HTTP (port 80) through firewall
+      ufw:
+        rule: allow
+        port: 80
+        proto: tcp
+
+    - name: Allow HTTPS (port 443) through firewall
+      ufw:
+        rule: allow
+        port: 443
+        proto: tcp
+
+    - name: Enable firewall
+      ufw:
+        state: enabled
+

@@ -1,0 +1,10 @@
+- hosts: ec2
+  become: yes
+  tasks:
+    - name: Execute ls /
+      command: ls /home/ansible
+      register: ls_output
+
+    - debug:
+        var: ls_output.stdout_lines
+
