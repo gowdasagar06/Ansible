@@ -1,0 +1,43 @@
+- name: "Install webserver"
+  hosts: test
+  become: yes
+  serial: 1  # Serial deployment with delay
+  tasks:
+    - name: "Install the web server"
+      package:
+        name: httpd
+        state: present
+
+    - name: "Create document root directory"
+      file:
+        path: /var/www/html
+        state: directory
+        recurse: yes
+
+    - name: "Remove old index.html file if exists"
+      file:
+        path: /var/www/html/index.html
+        state: absent
+      ignore_errors: yes
+
+    - name: "Copy new files"
+      copy:
+        src: ./index.html
+        dest: /var/www/html
+        force: no
+
+    - name: "Start the service"
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: "Restart the service after copying files"
+      service:
+        name: httpd
+        state: restarted
+
+    - name: "Pause for 10 seconds before proceeding to the next host"
+      pause:
+        seconds: 30
+
