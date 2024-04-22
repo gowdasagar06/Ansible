@@ -1,0 +1,14 @@
+- name: Create Auto Scaling Group
+  ec2_asg:
+    name: my-asg
+    launch_config_name: my-launch-config
+    min_size: 1
+    max_size: 3
+    desired_capacity: 1
+    vpc_zone_identifier: subnet-00517204282a7b5e2,subnet-00dd9e07cb46b87f7
+    region: ap-south-1
+    tags:
+      - key: Name
+        value: my-asg
+        propagate_at_launch: true
+

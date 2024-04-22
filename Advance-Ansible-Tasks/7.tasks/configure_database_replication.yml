@@ -1,0 +1,17 @@
+- name: Configure MySQL Master
+  mysql_replication:
+    mode: master
+    log_bin: mysql-bin
+    log_bin_index: mysql-bin.index
+    binlog_format: ROW
+    server_id: 1
+    when: ansible_hostname == "db-master"
+
+- name: Configure MySQL Slave
+  mysql_replication:
+    mode: slave
+    master_host: "{{ master_ip }}"
+    master_user: "{{ mysql_replication_user }}"
+    master_password: "{{ mysql_replication_password }}"
+    when: ansible_hostname == "db-slave"
+

@@ -1,0 +1,22 @@
+pipeline {
+     agent{
+              label 'master'
+            }
+
+    stages {
+        stage('git checkout') {
+            steps {
+                git branch: 'main' , url:'https://github.com/gowdasagar06/hello-world-mvn-java.git'  
+            }
+        }
+    stage("Copy"){
+        steps{
+            sh "pwd"
+            sh "ls"
+            sh "echo $WORKSPACE"
+            sh "sudo cp -R /var/lib/jenkins/workspace/Ansible/index.html /home/ansible/Ansible/Advance-Ansible-Tasks/1.tasks/"
+            sh "sudo -u ansible ansible-playbook /home/ansible/Ansible/Advance-Ansible-Tasks/1.tasks/main.yml"
+        }
+    }
+}
+}

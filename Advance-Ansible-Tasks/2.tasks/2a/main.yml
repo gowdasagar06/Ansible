@@ -1,7 +1,7 @@
 - name: "Install webserver"
-  hosts: test,localhost
+  hosts: all
   become: yes
-  serial: 1  # Serial deployment with delay
+    # serial: 1  # Serial deployment with delay
   tasks:
     - name: "Install the web server"
       package:
@@ -36,8 +36,4 @@
       service:
         name: httpd
         state: restarted
-
-    - name: "Pause for 10 seconds before proceeding to the next host"
-      pause:
-        seconds: 30
 

@@ -1,0 +1,31 @@
+- name: Create Application Load Balancer
+  elb_application_lb:
+    name: my-alb
+    state: present
+    subnets:
+      - subnet-00dd9e07cb46b87f7
+      - subnet-00517204282a7b5e2
+    security_groups:
+      - sg-03f30f0266b08b00d
+    listeners:
+      - Protocol: HTTP
+        Port: 80
+        DefaultActions:
+          - Type: fixed-response
+            FixedResponseConfig:
+              StatusCode: "200"
+    tags:
+      Name: my-alb
+
+- name: Register EC2 instances with the ALB
+  elb_target_group:
+    name: my-target-group
+    target_type: instance
+    port: 80
+    protocol: HTTP
+    vpc_id: vpc-0a6b0dd3588a1ea1b
+    targets:
+      - "{{ item.id }}"
+    state: present
+  loop: "{{ web_servers.instances }}"
+

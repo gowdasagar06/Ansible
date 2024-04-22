@@ -1,9 +1,15 @@
-- name: "Install webserver"
-  hosts: test,localhost
+---
+- name: Configuring backend servers for load balancer
+  hosts: ec2
   become: yes
-  serial: 1  # Serial deployment with delay
+  serial: 1
   tasks:
-    - name: "Install the web server"
+    - name: Create directory for software DVD
+      file:
+        path: "/software_dvd"
+        state: directory
+
+    - name: Install httpd package
       package:
         name: httpd
         state: present
@@ -39,5 +45,5 @@
 
     - name: "Pause for 10 seconds before proceeding to the next host"
       pause:
-        seconds: 30
+        seconds: 20
 

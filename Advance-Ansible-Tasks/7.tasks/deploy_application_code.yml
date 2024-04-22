@@ -1,0 +1,9 @@
+- name: Deploy Application Code
+  copy:
+    src: /path/to/application/code
+    dest: /var/www/html
+    owner: apache
+    group: apache
+    mode: "0644"
+  notify: restart apache
+

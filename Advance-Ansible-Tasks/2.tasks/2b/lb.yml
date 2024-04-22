@@ -1,0 +1,26 @@
+- name: configuring haproxy
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Install HAProxy package
+      package:
+        name: haproxy
+        state: present
+
+    - name: Copy HAProxy configuration file
+      template:
+        src: "./haproxy.cfg"
+        dest: "/etc/haproxy/haproxy.cfg"
+      notify: Restart HAProxy
+
+    - name: Ensure HAProxy service is restarted
+      service:
+        name: haproxy
+        state: restarted
+
+  handlers:
+    - name: Restart HAProxy
+      service:
+        name: haproxy
+        state: restarted
+
