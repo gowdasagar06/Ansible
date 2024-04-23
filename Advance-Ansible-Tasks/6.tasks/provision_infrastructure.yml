@@ -1,9 +1,30 @@
 - name: Provision infrastructure on AWS
   hosts: localhost
   connection: local
-  gather_facts: no  
+  gather_facts: no
 
   tasks:
+    - name: Create a Security Group
+      amazon.aws.ec2_security_group:
+        name: "Ansible-Test-Security-Group"
+        description: "Ansible-Testing"
+        vpc_id: vpc-0a6b0dd3588a1ea1b
+        region: ap-south-1
+        rules:
+          - proto: tcp
+            ports:
+              - 80
+            cidr_ip: 0.0.0.0/0
+            rule_desc: "allow all on port 80"
+      register: security_group
+
+    - name: Create a new Subnet
+      amazon.aws.ec2_vpc_subnet:
+        cidr: 10.0.1.0/24
+        region: ap-south-1
+        vpc_id: vpc-0a6b0dd3588a1ea1b
+      register: subnet
+
     - name: Launch an EC2 instance using the AMI
       amazon.aws.ec2_instance:
         name: "web"
@@ -13,8 +34,8 @@
         region: ap-south-1
         network:
           assign_public_ip: true
-          subnet_id: subnet-00517204282a7b5e2
+          subnet_id: "{{ subnet.subnet.id }}"
         security_groups:
-          - sg-03f30f0266b08b00d
+          - "{{ security_group.security_group_id }}"
       register: web
 
