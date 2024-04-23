@@ -1,0 +1,20 @@
+- name: Provision infrastructure on AWS
+  hosts: localhost
+  connection: local
+  gather_facts: no  
+
+  tasks:
+    - name: Launch an EC2 instance using the AMI
+      amazon.aws.ec2_instance:
+        name: "web"
+        key_name: sagar
+        image_id: ami-05295b6e6c790593e
+        instance_type: t2.micro
+        region: ap-south-1
+        network:
+          assign_public_ip: true
+          subnet_id: subnet-00517204282a7b5e2
+        security_groups:
+          - sg-03f30f0266b08b00d
+      register: web
+
