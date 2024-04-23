@@ -1,3 +1,4 @@
+#Switch to root user and execute this shell script
 #!/bin/bash
 # Add ansible user if not exists
 sudo useradd -m -s /bin/bash -G `whoami` ansible 2>/dev/null || true
